@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Game</title>
+   <style>
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    #game-container {
+      text-align: center;
+    }
+
+    #game-container div {
+      margin-bottom: 10px;
+    }
+
+    #word-display span {
+      font-size: 24px;
+    }
+
+    #guess-input {
+      font-size: 18px;  
+    }
+
+    #guess-button {
+      font-size: 18px;
+      padding: 5px 10px;
+    }
+
+    #message {
+      font-size: 18px;
+      color: green;
+    }
+
+    #promo-code {
+      font-size: 18px;
+      color: black;
+    }
+       body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background-image: url("assets/img/game.webp");
+      background-size: cover;
+      background-repeat: no-repeat;
+      background-position: center;
+    }
+    
+    #game-container {
+      text-align: center;
+    }
+
+    #game-title {
+      font-size: 36px;
+      color: black;
+      margin-top: 0;
+    }
+  </style>
+</head>
+<body>
+ <div id="game-container">
+    <h1 id="game-title">Game</h1>
+    
+    <!-- Здесь разместите HTML-код игры -->
+    <div id="game-content">
+    <p id="game-link">Game Link</p>
+    <div id="block" style="display: none;">
+      <div id="word-display"></div>
+      <input type="text" id="guess-input">
+      <button id="guess-button">Guess</button>
+      <p id="message"></p>
+      <p id="promo-code"></p>
+    </div>
+  </div>
+
+  <script>
+ function startGame() {
+  // Hide the game link
+  document.getElementById("game-link").style.display = "none";
+
+  // Show the game section
+  document.getElementById("block").style.display = "block";
+}
+
+// Array of words for the game
+const words = [
+  "milkygirl",
+  "honey",
+  "one piece",
+  "dessert",
+  "cookie"
+];
+
+// Select a random word from the array
+const randomIndex = Math.floor(Math.random() * words.length);
+let selectedWord = words[randomIndex].toLowerCase();
+
+// Set up initial game state
+let guessedLetters = [];
+let remainingGuesses = 6;
+let wordDisplay = "";
+
+// Display the hidden word with underscores
+for (let i = 0; i < selectedWord.length; i++) {
+  wordDisplay += "<span>_</span>";
+}
+document.getElementById("word-display").innerHTML = wordDisplay;
+
+// Handle guess button click
+document.getElementById("guess-button").addEventListener("click", function() {
+  let guessInput = document.getElementById("guess-input");
+  let guess = guessInput.value.toLowerCase();
+
+  // Check if the guessed letter is valid and not already guessed
+  if (guess.length === 1 && guess.match(/[a-z]/i) && !guessedLetters.includes(guess)) {
+    guessedLetters.push(guess);
+
+    // Check if the guessed letter is in the selected word
+    if (selectedWord.includes(guess)) {
+      // Update the word display with the correctly guessed letter
+      let updatedWordDisplay = "";
+      for (let i = 0; i < selectedWord.length; i++) {
+        if (guessedLetters.includes(selectedWord[i])) {
+          updatedWordDisplay += "<span>" + selectedWord[i] + "</span>";
+        } else {
+          updatedWordDisplay += "<span>_</span>";
+        }
+      }
+      document.getElementById("word-display").innerHTML = updatedWordDisplay;
+
+      // Check if the player has won
+      if (!updatedWordDisplay.includes("_")) {
+        document.getElementById("message").innerHTML = "Congratulations! You guessed the word.";
+        guessInput.disabled = true;
+        document.getElementById("guess-button").disabled = true;
+
+        // Create an audio element
+        let audio = new Audio('assets/img/win.mp3');
+
+        // Play the audio
+        audio.play();
+
+        // Provide the promo code after the game
+        let promoCode = "SPECIALCODE123";
+        document.getElementById("promo-code").innerHTML = "Your promo code: " + promoCode;
+      }
+    } else {
+      remainingGuesses--;
+
+      // Check if the player has lost
+      if (remainingGuesses === 0) {
+        document.getElementById("message").innerHTML = "Game is over! The word was: " + selectedWord;
+        guessInput.disabled = true;
+        document.getElementById("guess-button").disabled = true;
+      } else {
+        document.getElementById("message").innerHTML = "Wrong guess! Remaining guesses: " + remainingGuesses;
+      }
+    }
+  } else {
+    document.getElementById("message").innerHTML = "Invalid guess. Please enter a single letter that hasn't been guessed before.";
+  }
+
+  guessInput.value = "";
+});
+
+    // ... остальной код игры
+
+    // Вызов функции startGame() для начала игры
+    startGame();
+  </script>
+</body>
+</html>
